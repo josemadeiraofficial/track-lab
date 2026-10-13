@@ -6,50 +6,59 @@
 <title>Track Lab — JOSEMADEIRA</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a0a;color:#e8e8e8;min-height:100vh}
-  header{background:linear-gradient(90deg,#ff2d95 0%,#00e5ff 100%);padding:16px 28px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-  header h1{font-size:22px;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 12px rgba(0,0,0,.4)}
-  .container{max-width:1100px;margin:0 auto;padding:28px 20px}
-  .upload-area{border:2px dashed #ff2d95;border-radius:16px;padding:40px 20px;text-align:center;background:rgba(255,45,149,.04);margin-bottom:24px;transition:.3s}
-  .upload-area.dragover{background:rgba(255,45,149,.12);border-color:#00e5ff}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#050505;color:#e8e8e8;min-height:100vh;background-image:radial-gradient(circle at 20% 20%, rgba(255,45,149,.08), transparent 40%), radial-gradient(circle at 80% 80%, rgba(0,229,255,.06), transparent 40%)}
+  header{background:linear-gradient(90deg,#ff2d95 0%,#00e5ff 100%);padding:18px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 30px rgba(255,45,149,.3)}
+  header h1{font-size:24px;font-weight:800;letter-spacing:3px;color:#fff;text-shadow:0 0 20px rgba(0,0,0,.5)}
+  .container{max-width:1100px;margin:0 auto;padding:32px 20px}
+  .hero{background:linear-gradient(135deg,rgba(255,45,149,.15),rgba(0,229,255,.1));border:1px solid rgba(255,45,149,.3);border-radius:20px;padding:28px;margin-bottom:28px;text-align:center}
+  .hero h2{font-size:42px;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#fff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+  .hero p{color:#aaa;font-size:14px;letter-spacing:1px}
+  .upload-area{border:2px dashed #ff2d95;border-radius:18px;padding:48px 20px;text-align:center;background:rgba(255,45,149,.05);margin-bottom:24px;transition:.3s;cursor:pointer}
+  .upload-area.dragover{background:rgba(255,45,149,.15);border-color:#00e5ff}
   .upload-area p{color:#aaa;margin-top:8px;font-size:14px}
   input[type=file]{display:none}
-  .btn{background:linear-gradient(90deg,#ff2d95,#00e5ff);border:none;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
-  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,45,149,.4)}
+  .btn{background:linear-gradient(90deg,#ff2d95,#00e5ff);border:none;color:#fff;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:1px}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,45,149,.5)}
   .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-  textarea{width:100%;min-height:110px;background:#141414;border:1px solid #2a2a2a;border-radius:12px;color:#eee;padding:14px;font-size:14px;resize:vertical;margin-bottom:16px;font-family:inherit}
-  textarea:focus{outline:none;border-color:#00e5ff}
-  .settings{background:#111;border:1px solid #222;border-radius:12px;padding:16px;margin-bottom:20px}
+  textarea{width:100%;min-height:120px;background:#111;border:1px solid #2a2a2a;border-radius:14px;color:#eee;padding:16px;font-size:14px;resize:vertical;margin-bottom:16px;font-family:inherit}
+  textarea:focus{outline:none;border-color:#00e5ff;box-shadow:0 0 0 3px rgba(0,229,255,.15)}
+  .settings{background:#0d0d0d;border:1px solid #222;border-radius:16px;padding:20px;margin-bottom:24px}
   .settings label{font-size:13px;color:#aaa;display:block;margin-bottom:6px}
-  .settings input{width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#eee;padding:10px;font-size:13px}
-  .settings input:focus{outline:none;border-color:#ff2d95}
-  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px}
-  .card{background:#111;border:1px solid #222;border-radius:14px;padding:16px;text-align:center}
-  .card .label{font-size:11px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-  .card .value{font-size:22px;font-weight:700;color:#00e5ff}
+  .settings input, .settings select{width:100%;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:10px;color:#eee;padding:12px;font-size:13px}
+  .settings input:focus, .settings select:focus{outline:none;border-color:#ff2d95}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+  .card{background:#0d0d0d;border:1px solid #222;border-radius:16px;padding:18px;text-align:center;transition:.2s}
+  .card:hover{border-color:#00e5ff}
+  .card .label{font-size:11px;color:#888;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+  .card .value{font-size:24px;font-weight:800;color:#00e5ff}
   .card .value.warn{color:#ff9f43}
   .card .value.bad{color:#ff2d95}
-  .analysis{background:#111;border:1px solid #222;border-radius:16px;padding:22px;white-space:pre-wrap;font-size:14.5px;line-height:1.7;min-height:200px}
-  .analysis h3{color:#ff2d95;margin-bottom:12px;font-size:16px}
+  .analysis{background:#0d0d0d;border:1px solid #222;border-radius:18px;padding:24px;white-space:pre-wrap;font-size:15px;line-height:1.75;min-height:220px}
+  .analysis h3{color:#ff2d95;margin-bottom:14px;font-size:18px;letter-spacing:1px}
   .status{font-size:13px;color:#888;margin-top:12px;text-align:center}
   .row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
   .row .btn{flex:1;min-width:140px}
-  footer{text-align:center;padding:30px;color:#555;font-size:12px}
-  .copy-btn{background:#1a1a1a;border:1px solid #333;color:#aaa;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;margin-top:12px}
+  footer{text-align:center;padding:40px;color:#444;font-size:12px;letter-spacing:1px}
+  .copy-btn{background:#1a1a1a;border:1px solid #333;color:#aaa;padding:10px 18px;border-radius:10px;font-size:13px;cursor:pointer;margin-top:14px}
   .copy-btn:hover{color:#fff;border-color:#00e5ff}
 </style>
 </head>
 <body>
 <header>
   <h1>TRACK LAB</h1>
-  <span style="font-size:13px;opacity:.8">JOSEMADEIRA · Grok</span>
+  <span style="font-size:13px;opacity:.9;letter-spacing:1px">JOSEMADEIRA · GROK</span>
 </header>
 <div class="container">
+  <div class="hero">
+    <h2>READY TO RELEASE?</h2>
+    <p>ANALÝZA TRACKU · LUFS · STEREO · ABLETON NÁVOD</p>
+  </div>
+
   <div class="settings">
-    <label>xAI API klíč (Grok) — pro plnou AI analýzu</label>
+    <label>xAI API klíč (Grok) — zapamatuje se automaticky</label>
     <input type="password" id="apiKey" placeholder="xai-..." autocomplete="off">
-    <label style="margin-top:10px">Model</label>
-    <select id="model" style="width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#eee;padding:10px;font-size:13px">
+    <label style="margin-top:12px">Model</label>
+    <select id="model">
       <option value="grok-4-0709">grok-4 (doporučeno)</option>
       <option value="grok-3">grok-3</option>
       <option value="grok-2-1212">grok-2</option>
@@ -57,28 +66,28 @@
   </div>
 
   <div class="upload-area" id="dropZone">
-    <p style="font-size:32px;margin-bottom:8px">&#127911;</p>
-    <strong>Přetáhni track sem</strong>
+    <p style="font-size:40px;margin-bottom:10px">&#127911;</p>
+    <strong style="font-size:18px">Přetáhni track sem</strong>
     <p>nebo klikni a vyber soubor (WAV, MP3, AIFF)</p>
     <input type="file" id="fileInput" accept="audio/*">
   </div>
 
   <div id="fileInfo" style="display:none;margin-bottom:16px;font-size:14px;color:#aaa"></div>
 
-  <label style="font-size:13px;color:#888;margin-bottom:6px;display:block">Poznámky (volitelné) — žánr, reference, tempo, co je špatně</label>
+  <label style="font-size:13px;color:#888;margin-bottom:8px;display:block;letter-spacing:1px">POZNÁMKY (VOLITELNÉ)</label>
   <textarea id="notes" placeholder="např. melodic techno, 124 BPM, kick mi zaniká, stereo je moc široké..."></textarea>
 
   <div class="row">
     <button class="btn" id="analyzeBtn" disabled>ANALYZOVAT</button>
-    <button class="btn" id="offlineBtn" style="background:#1a1a1a;border:1px solid #333">Offline režim</button>
+    <button class="btn" id="offlineBtn" style="background:#1a1a1a;border:1px solid #333">OFFLINE REŽIM</button>
   </div>
 
   <div class="cards" id="cards"></div>
   <div class="analysis" id="analysis"></div>
-  <button class="copy-btn" id="copyBtn" style="display:none">Kopírovat rozbor</button>
+  <button class="copy-btn" id="copyBtn" style="display:none">KOPÍROVAT ROZBOR</button>
   <div class="status" id="status"></div>
 </div>
-<footer>Track Lab · Grok · JOSEMADEIRA</footer>
+<footer>TRACK LAB · GROK · JOSEMADEIRA</footer>
 
 <script>
 const dropZone = document.getElementById('dropZone');
@@ -91,7 +100,16 @@ const analysisEl = document.getElementById('analysis');
 const statusEl = document.getElementById('status');
 const fileInfoEl = document.getElementById('fileInfo');
 const copyBtn = document.getElementById('copyBtn');
+const apiKeyInput = document.getElementById('apiKey');
 let currentFile = null;
+
+// Load saved API key
+if (localStorage.getItem('xai_key')) {
+  apiKeyInput.value = localStorage.getItem('xai_key');
+}
+apiKeyInput.addEventListener('input', () => {
+  localStorage.setItem('xai_key', apiKeyInput.value.trim());
+});
 
 dropZone.addEventListener('click', () => fileInput.click());
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
@@ -123,7 +141,7 @@ offlineBtn.addEventListener('click', () => {
 });
 
 analyzeBtn.addEventListener('click', async () => {
-  const key = document.getElementById('apiKey').value.trim();
+  const key = apiKeyInput.value.trim();
   if (!key) { statusEl.textContent = 'Vlož xAI API klíč pro plnou analýzu, nebo použij Offline režim.'; return; }
   if (!currentFile) return;
 
@@ -167,7 +185,7 @@ analyzeBtn.addEventListener('click', async () => {
       <div class="card"><div class="label">Dynamic</div><div class="value">${dyn ? dyn[1] + ' dB' : '—'}</div></div>
     `;
 
-    analysisEl.innerHTML = '<h3>Rozbor (Grok)</h3>' + result.replace(/\n/g, '<br>');
+    analysisEl.innerHTML = '<h3>ROZBOR</h3>' + result.replace(/\n/g, '<br>');
     copyBtn.style.display = 'inline-block';
     statusEl.textContent = 'Hotovo';
   } catch (err) {
@@ -181,7 +199,7 @@ copyBtn.addEventListener('click', () => {
   const text = analysisEl.innerText;
   navigator.clipboard.writeText(text).then(() => {
     copyBtn.textContent = 'Zkopírováno';
-    setTimeout(() => copyBtn.textContent = 'Kopírovat rozbor', 1500);
+    setTimeout(() => copyBtn.textContent = 'KOPÍROVAT ROZBOR', 1500);
   });
 });
 </script>
