@@ -42,17 +42,17 @@
 <body>
 <header>
   <h1>TRACK LAB</h1>
-  <span style="font-size:13px;opacity:.8">JOSEMADEIRA</span>
+  <span style="font-size:13px;opacity:.8">JOSEMADEIRA · Grok</span>
 </header>
 <div class="container">
   <div class="settings">
-    <label>API klíč (OpenAI nebo Anthropic) — volitelné, pro plnou AI analýzu</label>
-    <input type="password" id="apiKey" placeholder="sk-... nebo sk-ant-..." autocomplete="off">
+    <label>xAI API klíč (Grok) — pro plnou AI analýzu</label>
+    <input type="password" id="apiKey" placeholder="xai-..." autocomplete="off">
     <label style="margin-top:10px">Model</label>
     <select id="model" style="width:100%;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:8px;color:#eee;padding:10px;font-size:13px">
-      <option value="gpt-4o-mini">gpt-4o-mini (OpenAI, levný)</option>
-      <option value="gpt-4o">gpt-4o (OpenAI)</option>
-      <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Anthropic)</option>
+      <option value="grok-4-0709">grok-4 (doporučeno)</option>
+      <option value="grok-3">grok-3</option>
+      <option value="grok-2-1212">grok-2</option>
     </select>
   </div>
 
@@ -78,7 +78,7 @@
   <button class="copy-btn" id="copyBtn" style="display:none">Kopírovat rozbor</button>
   <div class="status" id="status"></div>
 </div>
-<footer>Track Lab · lokální verze · JOSEMADEIRA</footer>
+<footer>Track Lab · Grok · JOSEMADEIRA</footer>
 
 <script>
 const dropZone = document.getElementById('dropZone');
@@ -117,48 +117,44 @@ offlineBtn.addEventListener('click', () => {
     <div class="card"><div class="label">Velikost</div><div class="value">${size} MB</div></div>
     <div class="card"><div class="label">Název</div><div class="value" style="font-size:14px">${currentFile.name.slice(0,18)}</div></div>
   `;
-  analysisEl.innerHTML = `<h3>Offline režim</h3>Tady je základní info o souboru. Pro plnou analýzu (LUFS, true peak, stereo, frekvence, AI detekce a Ableton návod) vlož API klíč nahoře a klikni na ANALYZOVAT.\n\nPoznámky: ${notesEl.value || '(prázdné)'}`;
+  analysisEl.innerHTML = `<h3>Offline režim</h3>Tady je základní info o souboru. Pro plnou analýzu vlož xAI API klíč nahoře a klikni na ANALYZOVAT.\n\nPoznámky: ${notesEl.value || '(prázdné)'}`;
   copyBtn.style.display = 'inline-block';
   statusEl.textContent = 'Offline režim — základní info';
 });
 
 analyzeBtn.addEventListener('click', async () => {
   const key = document.getElementById('apiKey').value.trim();
-  if (!key) { statusEl.textContent = 'Vlož API klíč pro plnou analýzu, nebo použij Offline režim.'; return; }
+  if (!key) { statusEl.textContent = 'Vlož xAI API klíč pro plnou analýzu, nebo použij Offline režim.'; return; }
   if (!currentFile) return;
 
   analyzeBtn.disabled = true;
-  statusEl.textContent = 'Analyzuji... (může trvat 15–40 s)';
+  statusEl.textContent = 'Analyzuji s Grokem... (může trvat 15–40 s)';
   cardsEl.innerHTML = '';
   analysisEl.innerHTML = '';
 
   const model = document.getElementById('model').value;
-  const isClaude = model.startsWith('claude');
   const notes = notesEl.value.trim() || 'bez poznámek';
 
   const prompt = `Jsi senior mixing a mastering inženýr specializovaný na house / tech house / melodic techno. Analyzuj track na základě poznámek uživatele a vrať výstup ve formátu:\n\n1) Krátké karty hodnot (odhadni realisticky podle žánru a poznámek):\n- LUFS integrated\n- True peak\n- Stereo width (0-100%)\n- Dynamic range\n- Low end (20-80 Hz)\n- Kick presence\n- Vocal/clarity issues\n\n2) Detailní rozbor v češtině:\n- Co je dobře\n- Co je špatně a proč to vadí\n- Konkrétní opravy pro Ableton Live 12 (efekt, nastavení, hodnoty)\n- Jestli je track připravený na label nebo co ještě chybí\n- Detekce možných AI artefaktů (pokud něco naznačuje)\n\nPoznámky uživatele: ${notes}\nNázev souboru: ${currentFile.name}\n\nOdpověz česky, přímo, prakticky, bez obecných frází.`;
 
   try {
-    let result;
-    if (isClaude) {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01' },
-        body: JSON.stringify({ model, max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
-      });
-      const data = await res.json();
-      result = data.content?.[0]?.text || JSON.stringify(data);
-    } else {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-        body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 2000, temperature: 0.4 })
-      });
-      const data = await res.json();
-      result = data.choices?.[0]?.message?.content || JSON.stringify(data);
-    }
+    const res = await fetch('https://api.x.ai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 2000,
+        temperature: 0.4
+      })
+    });
 
-    // Simple card extraction (look for numbers)
+    const data = await res.json();
+    const result = data.choices?.[0]?.message?.content || JSON.stringify(data);
+
     const lufs = result.match(/LUFS[^\d-]*(-?[\d.]+)/i);
     const peak = result.match(/true peak[^\d-]*(-?[\d.]+)/i) || result.match(/peak[^\d-]*(-?[\d.]+)/i);
     const stereo = result.match(/stereo[^\d]*([\d.]+)/i);
@@ -171,11 +167,11 @@ analyzeBtn.addEventListener('click', async () => {
       <div class="card"><div class="label">Dynamic</div><div class="value">${dyn ? dyn[1] + ' dB' : '—'}</div></div>
     `;
 
-    analysisEl.innerHTML = '<h3>Rozbor</h3>' + result.replace(/\n/g, '<br>');
+    analysisEl.innerHTML = '<h3>Rozbor (Grok)</h3>' + result.replace(/\n/g, '<br>');
     copyBtn.style.display = 'inline-block';
     statusEl.textContent = 'Hotovo';
   } catch (err) {
-    analysisEl.innerHTML = '<h3>Chyba</h3>' + err.message + '\n\nZkontroluj API klíč a model.';
+    analysisEl.innerHTML = '<h3>Chyba</h3>' + err.message + '\n\nZkontroluj xAI API klíč.';
     statusEl.textContent = 'Chyba při analýze';
   }
   analyzeBtn.disabled = false;
